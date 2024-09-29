@@ -8,7 +8,7 @@ export async function POST(req) {
     const data = await req.json();
     console.log(data);
 
-    const hashedId = await hashPassword(data.user.id);
+    const hashedId = await hashPassword(data.userId);
     console.log("Hashed ID:", hashedId);
 
     // Fetch all documents from userData collection
@@ -18,19 +18,21 @@ export async function POST(req) {
     let userExists = false;
     let existingDocId = null;
 
-    // Check if any document's userId matches the hashed ID
-    querySnapshot.forEach(doc => {
+    // Use for...of to await inside the loop
+    for (const doc of querySnapshot.docs) {
       const userData = doc.data();
+      console.log(userData.userId);
+
       // Compare the hashed IDs directly
-      console.log(data.user.id);
-      
-      if (comparePassword(data.user.id, userData.userId)) {
+      const isMatch = await comparePassword(data.userId, userData.userId);
+      if (isMatch) {
         userExists = true;
         existingDocId = doc.id;
         console.log(userExists);
         console.log(existingDocId);
+        break; // Exit the loop if a match is found
       }
-    });
+    }
 
     if (userExists) {
       // User already exists, update the document
@@ -38,30 +40,29 @@ export async function POST(req) {
       
       await updateDoc(docRef, {
         userId: hashedId,
-        age: data.age,
-        allergies: data.allergies,
-        bloodGroup: data.bloodGroup,
-        bmi: data.bmi,
-        chronicDiseases: data.chronicDiseases,
-        height: data.height,
-        weight: data.weight,
+        height: data?.height,
+        weight: data?.weight,
+        chronicDiseases:data?.chronicDieases,
+        allergies:data?.allergies,
+        bmi:data?.bmi,
       });
 
+     
       return NextResponse.json({ message: "Data updated successfully" });
     } else {
       // User doesn't exist, create a new document
-      const docRef = await addDoc(collection(db, "userData"), {
-        userId: hashedId,
-        age: data?.age,
-        allergies: data?.allergies,
-        bloodGroup: data?.bloodGroup,
-        bmi: data?.bmi,
-        chronicDiseases: data?.chronicDiseases,
-        height: data?.height,
-        weight: data?.weight,
-      });
+      // const docRef = await addDoc(collection(db, "userData"), {
+      //   userId: hashedId,
+      //   age: data?.age,
+      //   allergies: data?.allergies,
+      //   bloodGroup: data?.bloodGroup,
+      //   bmi: data?.bmi,
+      //   chronicDiseases: data?.chronicDiseases,
+      //   height: data?.height,
+      //   weight: data?.weight,
+      // });
 
-      return NextResponse.json({ message: "Document created successfully", docId: docRef.id });
+      return NextResponse.json({ message: "User do not exist" });
     }
   } catch (error) {
     console.error("Error updating or creating data:", error);
