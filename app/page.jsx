@@ -116,6 +116,17 @@ export default function Home() {
               </p>
             </div>
           </Link>
+          <Link
+            href={"/diet-plan"}
+            className="w-full rounded-xl bg-white p-4 text-black shadow"
+          >
+            <div className="flex flex-col">
+              <h2 className="text-xl font-semibold">Diet Plan</h2>
+              <p className="text-sm text-neutral-500">
+                Predict a disease using symptoms
+              </p>
+            </div>
+          </Link>
           {/* {subscription ? (
             <>
               <input

@@ -185,7 +185,7 @@ const Medication = ({userId}) => {
                 </button>
                 <button
                   disabled={load}
-                  className="w-full rounded-[0.4rem] bg-red-500 p-2 text-white shadow hover:bg-red-600"
+                  className="w-full flex justify-center items-center rounded-[0.4rem] bg-red-500 p-2 text-white shadow hover:bg-red-600"
                   onClick={changeInterval}
                 >
                   {load ? (

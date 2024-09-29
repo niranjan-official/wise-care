@@ -3,6 +3,8 @@ import "./globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import UserProfileButton from "@/components/UserProfileButton";
 import Tab from "@/components/Tab";
+import Loading from "./loading";
+import { Suspense } from "react";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -23,18 +25,21 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <ClerkProvider>
-    <html lang="en">
-      <body
-        className={`${geistSans.className} ${geistMono.variable} antialiased`}
-      >
-        <div className="flex w-full justify-between p-4 shadow">
+      <html lang="en">
+        <body
+          className={`${geistSans.className} ${geistMono.variable} flex flex-col items-center antialiased max-w-3xl`}
+        >
+          <div className="flex w-full justify-between p-4 pb-2 shadow">
+            <div>
             <h1 className="text-2xl font-bold">WiseCare</h1>
+            <p className="text-neutral-500">Your health, Our Priority</p>
+            </div>
             <UserProfileButton />
-        </div>
-        {children}
-        <Tab/>
-      </body>
-    </html>
+          </div>
+          <Suspense fallback={<Loading />}>{children}</Suspense>
+          <Tab />
+        </body>
+      </html>
     </ClerkProvider>
   );
 }
